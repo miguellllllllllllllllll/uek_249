@@ -1,0 +1,372 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Bibliothek API",
+    "version": "1.0.0",
+    "description": "API zur Verwaltung von Büchern und Ausleihen"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "paths": {
+    "/books": {
+      "get": {
+        "summary": "Liste aller Bücher",
+        "responses": {
+          "200": {
+            "description": "Liste der Bücher",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BookOverview"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Neues Buch hinzufügen",
+        "requestBody": {
+          "description": "Buchobjekt, das hinzugefügt werden soll",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Book"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Buch erfolgreich hinzugefügt",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Book"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Buch mit dieser ISBN existiert bereits"
+          }
+        }
+      }
+    },
+    "/books/{isbn}": {
+      "get": {
+        "summary": "Buch nach ISBN abrufen",
+        "parameters": [
+          {
+            "name": "isbn",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ISBN des Buches"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Buchdetails",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Book"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Buch nicht gefunden"
+          }
+        }
+      },
+      "put": {
+        "summary": "Buch aktualisieren",
+        "parameters": [
+          {
+            "name": "isbn",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ISBN des Buches"
+          }
+        ],
+        "requestBody": {
+          "description": "Aktualisierte Buchdaten",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Book"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Buch erfolgreich aktualisiert",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Book"
+                }
+              }
+            }
+          },
+          "420": {
+            "description": "Ungültige Buchdaten"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Buch löschen",
+        "parameters": [
+          {
+            "name": "isbn",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ISBN des zu löschenden Buches"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Buch erfolgreich gelöscht"
+          }
+        }
+      }
+    },
+    "/lends": {
+      "get": {
+        "summary": "Liste aller Ausleihen",
+        "responses": {
+          "200": {
+            "description": "Liste der Ausleihen",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Lend"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Neues Buch ausleihen",
+        "requestBody": {
+          "description": "Ausleihdaten",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Lend"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Ausleihe erfolgreich erstellt",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Lend"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Fehlende Felder"
+          },
+          "409": {
+            "description": "ID existiert bereits"
+          }
+        }
+      }
+    },
+    "/lends/{id}": {
+      "get": {
+        "summary": "Ausleihe nach ID abrufen",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID der Ausleihe"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ausleihdetails",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Lend"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Ausleihe nicht gefunden"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Buch zurückgeben",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID der Ausleihe"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Buch erfolgreich zurückgegeben"
+          },
+          "404": {
+            "description": "Keine Ausleihe mit dieser ID gefunden"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "Benutzer einloggen",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Benutzername"
+          },
+          {
+            "name": "password",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Passwort"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Erfolgreich eingeloggt"
+          },
+          "400": {
+            "description": "Fehlende Anmeldedaten"
+          },
+          "401": {
+            "description": "Falsches Passwort oder Benutzername"
+          }
+        }
+      }
+    },
+    "/verify": {
+      "get": {
+        "summary": "Login-Status überprüfen",
+        "responses": {
+          "200": {
+            "description": "Benutzer ist eingeloggt"
+          },
+          "403": {
+            "description": "Benutzer ist nicht eingeloggt"
+          }
+        }
+      }
+    },
+    "/logout": {
+      "delete": {
+        "summary": "Benutzer ausloggen",
+        "responses": {
+          "200": {
+            "description": "Erfolgreich ausgeloggt"
+          },
+          "404": {
+            "description": "Benutzer ist nicht eingeloggt"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Book": {
+        "type": "object",
+        "required": ["isbn", "title", "author", "year"],
+        "properties": {
+          "isbn": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "year": {
+            "type": "integer"
+          }
+        }
+      },
+      "BookOverview": {
+        "type": "object",
+        "properties": {
+          "isbn": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      },
+      "Lend": {
+        "type": "object",
+        "required": ["id", "isbn", "title", "personName"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "isbn": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "personName": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
