@@ -42,9 +42,14 @@ app.post("/addTask", (req, res) => {
   res.send(tasks);
 });
 
-app.delete("/deleteTask", (req, res) => {
-  const TaskToBeDeleted = req.params.id;
-  tasks;
+// Task lösche
+app.delete("/deleteTask/:idOfTask", (req, res) => {
+  const IdOfTask = req.params.id;
+  //   if (!IdOfTask) {
+  //     res.status(404).send("Task wurde nicht gefunden");
+  //   }
+  tasks = tasks.filter((task) => task.IdOfTask !== IdOfTask);
+  res.status(200).send("Task gelöscht!");
 });
 // ohni de lauft nöd
 app.listen(3000, () => {
